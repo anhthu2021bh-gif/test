@@ -1,0 +1,6 @@
+{
+  "name": "Bảng 15 Thuật Ngữ AI - Phát Âm Chuẩn Anh-Anh",
+  "description": "Bảng từ vựng 15 thuật ngữ cốt lõi về Trí tuệ Nhân tạo kèm nút phát âm giọng Anh-Anh tone trầm, phiên âm và ví dụ thực tế.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
