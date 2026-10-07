@@ -18,11 +18,13 @@ import {
   Headphones,
   Award,
   Layers,
-  ArrowRight
+  ArrowRight,
+  BookOpen
 } from 'lucide-react';
 import { AI_TERMS, AITerm } from './data/aiTerms';
 import { speechEngine, SpeechOptions } from './utils/speech';
 import { HtmlExportModal } from './components/HtmlExportModal';
+import { DictionaryModal } from './components/DictionaryModal';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,6 +35,8 @@ export default function App() {
   const [autoTourIndex, setAutoTourIndex] = useState<number>(-1);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [selectedDictionaryTerm, setSelectedDictionaryTerm] = useState<AITerm | null>(null);
+  const [isDictionaryModalOpen, setIsDictionaryModalOpen] = useState(false);
 
   // Audio configuration settings
   const [pitch, setPitch] = useState<number>(0.78); // Tone trầm chuẩn (0.78)
@@ -216,6 +220,19 @@ export default function App() {
               >
                 <Sliders className="w-3.5 h-3.5" />
                 <span>Cài đặt tone trầm & giọng</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const termToShow = filteredTerms[0] || AI_TERMS[0];
+                  setSelectedDictionaryTerm(termToShow);
+                  setIsDictionaryModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-colors"
+                title="Mở gợi ý từ điển học thuật & từ vựng liên quan"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                <span>Gợi ý từ điển</span>
               </button>
 
               <button
@@ -490,8 +507,21 @@ export default function App() {
                                 {item.definitionVi}
                               </div>
 
-                              <div className="mt-2 text-[11px] text-slate-500">
-                                Chuyên đề: {item.category}
+                              <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedDictionaryTerm(item);
+                                    setIsDictionaryModalOpen(true);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-sky-950 text-slate-300 hover:text-sky-300 border border-slate-700 hover:border-sky-600 text-xs font-medium transition-colors"
+                                  title={`Xem gợi ý từ điển, collocations và thuật ngữ liên quan cho ${item.term}`}
+                                >
+                                  <BookOpen className="w-3 h-3 text-amber-400" />
+                                  <span>Gợi ý từ điển</span>
+                                </button>
+                                <span className="text-[11px] text-slate-500">
+                                  Chuyên đề: {item.category}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -660,6 +690,23 @@ export default function App() {
       <HtmlExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
+      />
+
+      {/* Dictionary Suggestions Modal */}
+      <DictionaryModal
+        term={selectedDictionaryTerm}
+        isOpen={isDictionaryModalOpen}
+        onClose={() => setIsDictionaryModalOpen(false)}
+        onSelectRelatedTerm={(relatedName) => {
+          const match = AI_TERMS.find(
+            (t) => t.term.toLowerCase() === relatedName.toLowerCase()
+          );
+          if (match) {
+            setSelectedDictionaryTerm(match);
+          }
+        }}
+        pitch={pitch}
+        rate={rate}
       />
     </div>
   );
